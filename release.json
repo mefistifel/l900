@@ -1,5 +1,6 @@
 {
   "version": "1.8",
   "file": "bot.py",
-  "sha256": "c37a7e4ee79aaf3958758986de9cd46b03ffde1b519f7f3f204741b938b64dc3"
+  "sha256": "c37a7e4ee79aaf3958758986de9cd46b03ffde1b519f7f3f204741b938b64dc3",
+  "source_commit": "6477bbd67903ac40b28cdec8ddac2d425bc295c9"
 }
