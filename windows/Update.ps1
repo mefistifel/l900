@@ -66,8 +66,9 @@ try {
  if(-not $vpn.State.Running -or -not $bot.State.Running){throw 'VPN or bot is stopped; update postponed.'}
  if($bot.HostConfig.NetworkMode -notin @("container:$($vpn.Id)",'container:bot-vpn')){throw 'VPN network mismatch; update postponed.'}
  # Check actual Telegram HTTPS reachability before making any bot changes.
- $networkCode="import ssl,urllib.request,urllib.error; o=urllib.request.build_opener(urllib.request.ProxyHandler({}),urllib.request.HTTPSHandler(context=ssl.create_default_context())); o.open('https://api.telegram.org/',timeout=10).close(); print('HTTPS_OK')"
- $null=Invoke-DockerChecked -DockerArgs @('exec','kitaichip-antispam','python','-c',$networkCode)
+ $networkCode="exec(__import__('base64').b64decode('IiIiSFRUUFMgcmVhY2hhYmlsaXR5IHByb2JlOyByZWFkcyBubyBib3QgY3JlZGVudGlhbHMgYW5kIGlnbm9yZXMgcHJveHkgZW52aXJvbm1lbnQuIiIiCmltcG9ydCBzc2wKaW1wb3J0IHVybGxpYi5lcnJvcgppbXBvcnQgdXJsbGliLnJlcXVlc3QKCgpkZWYgbWFpbigpOgogICAgb3BlbmVyID0gdXJsbGliLnJlcXVlc3QuYnVpbGRfb3BlbmVyKAogICAgICAgIHVybGxpYi5yZXF1ZXN0LlByb3h5SGFuZGxlcih7fSksCiAgICAgICAgdXJsbGliLnJlcXVlc3QuSFRUUFNIYW5kbGVyKGNvbnRleHQ9c3NsLmNyZWF0ZV9kZWZhdWx0X2NvbnRleHQoKSksCiAgICAgICAgdXJsbGliLnJlcXVlc3QuSFRUUFJlZGlyZWN0SGFuZGxlcigpLAogICAgKQogICAgdHJ5OgogICAgICAgIHdpdGggb3BlbmVyLm9wZW4oJ2h0dHBzOi8vYXBpLnRlbGVncmFtLm9yZy9yb2JvdHMudHh0JywgdGltZW91dD04KSBhcyByZXNwb25zZToKICAgICAgICAgICAgb2sgPSByZXNwb25zZS5nZXR1cmwoKS5zdGFydHN3aXRoKCdodHRwczovL2FwaS50ZWxlZ3JhbS5vcmcvJykgYW5kIHJlc3BvbnNlLnN0YXR1cyA9PSAyMDAKICAgIGV4Y2VwdCB1cmxsaWIuZXJyb3IuSFRUUEVycm9yIGFzIGV4YzoKICAgICAgICBvayA9IGV4Yy5jb2RlIGluICg0MDEsIDQwNCkgYW5kIGV4Yy5nZXR1cmwoKS5zdGFydHN3aXRoKCdodHRwczovL2FwaS50ZWxlZ3JhbS5vcmcvJykKICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZXhjOgogICAgICAgIHByaW50KCdIVFRQU19VTkFWQUlMQUJMRSAnICsgdHlwZShleGMpLl9fbmFtZV9fKQogICAgICAgIHJldHVybiAwCiAgICBwcmludCgnSFRUUFNfT0snIGlmIG9rIGVsc2UgJ0hUVFBTX1VORVhQRUNURURfUkVTUE9OU0UnKQogICAgcmV0dXJuIDAKCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgcmFpc2UgU3lzdGVtRXhpdChtYWluKCkpCg=='))"
+ $networkResult=Invoke-DockerChecked -DockerArgs @('exec','kitaichip-antispam','python','-c',$networkCode)
+ if($networkResult.Trim() -ne 'HTTPS_OK'){throw 'Telegram HTTPS is unavailable; update postponed until VPN recovery.'}
  $compose=$null
  foreach($name in @('compose.yaml','compose.yml','docker-compose.yml','docker-compose.yaml')){
   $candidate=Join-Path $project $name
