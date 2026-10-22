@@ -1,0 +1,12 @@
+.env
+*.conf
+*.key
+*.pem
+*.db
+*.sqlite*
+data/
+backups/
+profile-backups/
+state.json
+config.json
+*.log
